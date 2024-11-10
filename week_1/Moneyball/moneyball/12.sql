@@ -1,16 +1,27 @@
-SELECT "players"."first_name" , "players"."last_name"
-FROM "players"
-JOIN "performances" ON "performances"."player_id" = "players"."id"
-        AND "performances"."year" = "salaries"."year"
-JOIN "salaries" ON "salaries"."player_id" = "players"."id"
-WHERE "salaries"."year" = 2001
-      AND ("salaries"."salary"/"performances"."H") IN (
-        SELECT 
-      )
-ORDER BY "players"."id" , "players"."last_name"
-LIMIT 10;
 
+SELECT "first_name" , "last_name" FROM (
+  SELECT "first_name" , "last_name" , "id" FROM (
+    SELECT "first_name" , "last_name" , "players"."id" AS "id"
+    FROM "performances"
+    JOIN "players" ON "players"."id" = "performances"."player_id"
+    JOIN "salaries" ON "salaries"."player_id" = "players"."id"
+    AND "performances"."year" = "salaries"."year"
+    WHERE "performances"."year" = 2001 AND "H" > 0
+    ORDER BY "salary"/"H"
+    LIMIT 10
+  )
 
+  INTERSECT
 
-"salaries"."salary"/"performances"."H" ,
-         "salaries"."salary"/"performances"."RBI" ,
+  SELECT "first_name","last_name","id" FROM (
+    SELECT "first_name" , "last_name" , "players"."id" AS "id" FROM "performances"
+    JOIN "players" ON "players"."id" = "performances"."player_id"
+    JOIN "salaries" ON "salaries"."player_id" = "players"."id"
+    AND "performances"."year" = "salaries"."year"
+    WHERE "performances"."year" = 2001 AND "RBI" > 0
+    ORDER BY "salary" / "RBI"
+    LIMIT 10
+  )
+)
+ORDER BY "id";
+
