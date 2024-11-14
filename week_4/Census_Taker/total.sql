@@ -1,3 +1,5 @@
+#Calculates total
+
 CREATE VIEW "total" AS
 SELECT SUM("families") AS "families" ,
        SUM("households") AS "households" ,
